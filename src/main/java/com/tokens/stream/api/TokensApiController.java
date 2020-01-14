@@ -13,10 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tokens.model.TokensResponse;
 import com.tokens.model.TokensStore;
 import com.tokens.stream.service.TokensFetchingService;
-
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2019-12-18T15:17:56.845-07:00")
 @Controller
@@ -33,10 +31,10 @@ public class TokensApiController implements TokensApi {
 		this.request = request;
 	}
 
-	public ResponseEntity<Map<String, String>> get(@PathVariable Long fileId) {
+	public ResponseEntity<Map<String, String>> get(@PathVariable String externalFileId) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			TokensStore store = tokensFetchingService.getFile(fileId);
+			TokensStore store = tokensFetchingService.getFile(externalFileId);
 			Map<String, String> tokensPair = tokensFetchingService.processFile(store);
 			return new ResponseEntity<Map<String, String>>(tokensPair, HttpStatus.OK);
 		}

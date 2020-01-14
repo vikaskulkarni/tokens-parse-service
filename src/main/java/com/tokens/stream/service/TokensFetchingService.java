@@ -28,13 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 public class TokensFetchingService {
 	@Autowired
 	private TokensFileRepo tokensFileRepo;
-	private static final Logger logger = LoggerFactory.getLogger(TokensFetchingService.class);
 
-	public TokensStore getFile(Long fileId) {
+	public TokensStore getFile(String externalFileId) {
 		try {
-			return tokensFileRepo.findById(fileId)
-					.orElseThrow(() -> new FileNotFoundException("File not found with id " + fileId));
-		} catch (FileNotFoundException e) {
+			return tokensFileRepo.findByExternalId(externalFileId)
+					.orElseThrow(() -> new FileNotFoundException("File not found with id " + externalFileId));
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -56,7 +55,7 @@ public class TokensFetchingService {
 			tokenMapping = stream.filter(line -> line.matches("^\\w+=\\w+$"))
 					.collect(Collectors.toMap(s -> s.split("=")[0], s -> s.split("=")[1]));
 
-			logger.info((Arrays.toString(tokenMapping.entrySet().toArray())));
+			log.info((Arrays.toString(tokenMapping.entrySet().toArray())));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

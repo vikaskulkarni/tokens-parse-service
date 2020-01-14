@@ -29,7 +29,7 @@ public interface TokensApi {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success", response = TokensResponse.class, responseContainer = "List"),
 			@ApiResponse(code = 200, message = "Error", response = ErrorResponse.class) })
-	@RequestMapping(value = "/{fileId}", produces = { "application/json" }, consumes = { "application/json",
+	@RequestMapping(value = "/{externalFileId}", produces = { "application/json" }, consumes = { "application/json",
 			"multipart/form-data" }, method = RequestMethod.GET)
-	ResponseEntity<Map<String, String>> get(Long fileId);
+	ResponseEntity<Map<String, String>> get(String externalFileId);
 }

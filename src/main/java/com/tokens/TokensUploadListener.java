@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import com.tokens.config.TokensStreams;
 import com.tokens.model.EventToken;
-import com.tokens.model.TokensStore;
 import com.tokens.stream.service.TokensFetchingService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,16 @@ public class TokensUploadListener {
 	@StreamListener(TokensStreams.INPUT)
 	public void handleTokens(@Payload EventToken token) {
 		log.info("Received tokens: {}", token.getTimestamp());
-		TokensStore store = tokensFetchingService.getFile(token.getFileId());
-		System.out.println();
+
+		switch (token.getStatus()) {
+		case STARTED:
+			log.info("Started...");
+			break;
+		case COMPLETED:
+			log.info("Completed...");
+			tokensFetchingService.getFile(token.getExternalFileId());
+			break;
+		}
+
 	}
 }
