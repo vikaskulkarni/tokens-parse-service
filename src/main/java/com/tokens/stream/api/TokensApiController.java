@@ -1,7 +1,5 @@
 package com.tokens.stream.api;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tokens.model.FileMetadata;
 import com.tokens.model.TokensStore;
 import com.tokens.stream.service.TokensFetchingService;
 
@@ -31,12 +30,12 @@ public class TokensApiController implements TokensApi {
 		this.request = request;
 	}
 
-	public ResponseEntity<Map<String, String>> get(@PathVariable String externalFileId) {
+	public ResponseEntity<FileMetadata> get(@PathVariable String externalFileId) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			TokensStore store = tokensFetchingService.getFile(externalFileId);
-			Map<String, String> tokensPair = tokensFetchingService.processFile(store);
-			return new ResponseEntity<Map<String, String>>(tokensPair, HttpStatus.OK);
+			FileMetadata tokensPair = tokensFetchingService.processFile(store);
+			return new ResponseEntity<FileMetadata>(tokensPair, HttpStatus.OK);
 		}
 		return null;
 

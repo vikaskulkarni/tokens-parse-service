@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tokens.model.FileMetadata;
 import com.tokens.model.TokensResponse;
 import com.tokens.model.TokensStore;
 import com.tokens.repository.TokensFileRepo;
@@ -39,8 +41,9 @@ public class TokensFetchingService {
 		return null;
 	}
 
-	public Map<String, String> processFile(TokensStore store) {
+	public FileMetadata processFile(TokensStore store) {
 		File tokensFile = new File("tmpFile");
+		FileMetadata fileMetadata = null;
 		try {
 			OutputStream os = new FileOutputStream(tokensFile);
 			os.write(store.getToken_file_content());
@@ -53,12 +56,16 @@ public class TokensFetchingService {
 		try (Stream<String> stream = Files.lines(Paths.get(tokensFile.toPath().toUri()))) {
 
 			tokenMapping = stream.filter(line -> line.matches("^\\w+=\\w+$"))
-					.collect(Collectors.toMap(s -> s.split("=")[0], s -> s.split("=")[1]));
+					.collect(Collectors.toMap(s -> s.split("=")[0], s -> s.split("=")[1], (x1, x2) -> x1));
+
+			int noOfLines = tokenMapping.size();
+			FileTime fileCreationTime = (FileTime) Files.getAttribute(tokensFile.toPath(), "creationTime");
+			fileMetadata = new FileMetadata(tokensFile.getName(), fileCreationTime.toString(), noOfLines, tokenMapping);
 
 			log.info((Arrays.toString(tokenMapping.entrySet().toArray())));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return tokenMapping;
+		return fileMetadata;
 	}
 }

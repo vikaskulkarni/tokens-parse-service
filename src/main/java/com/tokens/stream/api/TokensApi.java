@@ -5,13 +5,12 @@
  */
 package com.tokens.stream.api;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.tokens.model.ErrorResponse;
+import com.tokens.model.FileMetadata;
 import com.tokens.model.TokensResponse;
 
 import io.swagger.annotations.Api;
@@ -31,5 +30,5 @@ public interface TokensApi {
 			@ApiResponse(code = 200, message = "Error", response = ErrorResponse.class) })
 	@RequestMapping(value = "/{externalFileId}", produces = { "application/json" }, consumes = { "application/json",
 			"multipart/form-data" }, method = RequestMethod.GET)
-	ResponseEntity<Map<String, String>> get(String externalFileId);
+	ResponseEntity<FileMetadata> get(String externalFileId);
 }
